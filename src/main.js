@@ -1,9 +1,12 @@
 const express = require('express')
 const app = express
-
+const userRoutes = require('./routes/userRoutes')
+const postRoutes = require('./routes/postRoutes')
 // const db = require('')
 
 app.use(express.json)
+userRoutes.use('/users', userRoutes)
+postRoutes.use('/post', userRoutes)
 
 const PORT = 3000
 
