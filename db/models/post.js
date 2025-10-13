@@ -1,4 +1,5 @@
 'use strict';
+const { allow } = require('joi');
 const {
   Model
 } = require('sequelize');
@@ -13,8 +14,12 @@ module.exports = (sequelize, DataTypes) => {
       Post.belongsTo(models.User, {
         foreignKey: 'nickName'
       })
-      Post.hasMany(models.Comment)
-      Post.hasMany(models.postImagenes)
+      Post.hasMany(models.Comment, {
+        foreignKey: 'idPost',
+      })
+      Post.hasMany(models.postImagenes, {
+        foreignKey: 'idPost'
+      })
       Post.belongsToMany(models.Tag, {
         through: 'Asigna'
       })
@@ -24,13 +29,22 @@ module.exports = (sequelize, DataTypes) => {
     idPost: {
       type: DataTypes.INTEGER,
       primaryKey: true,
-      autoIncrement: true,
+      autoIncrement: true
     },
     fechaPublicacion: DataTypes.DATE,
-    descripcion: DataTypes.STRING
+    descripcion: DataTypes.STRING,
+    nickName: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      references: {
+        model: 'Users',
+        key: 'nickName'
+      }
+    }
   }, {
     sequelize,
     modelName: 'Post',
+    tableName: 'Posts'
   });
   return Post;
 };

@@ -1,14 +1,14 @@
 const express = require('express');
 const app = express();
-const userRoutes = require('./routes/userRoutes');
+require('dotenv').config();
 // const postRoutes = require('./routes/postRoutes')
 const db = require('../db/models');
 
 app.use(express.json());
-userRoutes.use('/users', userRoutes);
-// postRoutes.use('/post', userRoutes)
 
-require('dotenv').config();
+const userRoutes = require('./routes/userRoutes');
+
+app.use('/users', userRoutes);
 
 const PORT = process.env.PORT || 3000
 

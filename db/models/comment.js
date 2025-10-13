@@ -33,20 +33,19 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.BOOLEAN,
       defaultValue: true,
     },
-    fkIdPost: {
+    idPost: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: 'Post',
+        model: 'Posts',
         key: 'idPost'
       }
     },
-    fkNickName: {
+    nickName: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: true,
       references: {
-        model: 'User',
+        model: 'Users',
         key: 'nickName'
       }
     }
@@ -54,6 +53,7 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'Comment',
+    tableName: 'Comments'
   });
   return Comment;
 };

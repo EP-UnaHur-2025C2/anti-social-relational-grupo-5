@@ -11,10 +11,10 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       User.hasMany(models.Post, {
-        foreignKey: 'nickName'
+        foreignKey: 'fkNickName'
       })
       User.hasMany(models.Comment, {
-        foreignKey: 'nickName'
+        foreignKey: 'fkNickName'
       })
     }
   }
@@ -23,10 +23,11 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       primaryKey: true,
       allowNull: false,
-      unique: true,
+      unique: true
     },
     nombre: {
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     apellido: {
       type: DataTypes.STRING,
@@ -35,6 +36,7 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'User',
+    tableName: 'Users'
   });
   return User;
 };

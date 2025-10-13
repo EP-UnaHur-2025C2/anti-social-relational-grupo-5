@@ -19,15 +19,25 @@ module.exports = (sequelize, DataTypes) => {
     idImagen:{
       type: DataTypes.INTEGER,
       primaryKey: true,
-      autoIncrement: true,
+      autoIncrement: true
     },
     url: {
       type: DataTypes.STRING,
       allowNull: false,
+    },
+    idPost:{
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references:
+      {
+        model: 'Post',
+        key: 'idPost'
+      }
     }
   }, {
     sequelize,
     modelName: 'postImagenes',
+    tableName: 'postImagenes'
   });
   return postImagenes;
 };

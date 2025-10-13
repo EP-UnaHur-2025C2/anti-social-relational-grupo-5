@@ -3,25 +3,23 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.bulkInsert('Users', 
-      [
-    {
+    await queryInterface.bulkInsert('Comments', [{
+      fechaComentario: new Date(),
+      contenido: 'Hola amigos de esta red social',
+      idPost: 1,
       nickName: 'SuperJuan',
-      nombre: 'Juan',
-      apellido: 'Perez',
       createdAt: new Date(),
       updatedAt: new Date()
     },
     {
+      fechaComentario: new Date(),
+      contenido: 'Hola Juan',
+      idPost: 1,
       nickName: 'SuperPablo',
-      nombre: 'Pablo',
-      apellido: 'Perez',
       createdAt: new Date(),
       updatedAt: new Date()
     }
-  
   ], {});
-
   },
 
   async down(queryInterface, Sequelize) {

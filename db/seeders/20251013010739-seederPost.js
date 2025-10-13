@@ -3,25 +3,21 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.bulkInsert('Users', 
-      [
-    {
-      nickName: 'SuperJuan',
-      nombre: 'Juan',
-      apellido: 'Perez',
+    await queryInterface.bulkInsert('Posts', [{
+      fechaPublicacion: Date(),
+      descripcion: 'Primer post',
+      nickName:'SuperJuan',
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     },
     {
-      nickName: 'SuperPablo',
-      nombre: 'Pablo',
-      apellido: 'Perez',
+      fechaPublicacion: Date(),
+      descripcion: 'Segundo post',
+      nickName:'SuperPablo',
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     }
-  
   ], {});
-
   },
 
   async down(queryInterface, Sequelize) {
