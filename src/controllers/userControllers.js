@@ -1,4 +1,3 @@
-const { where } = require('sequelize')
 const { User } = require('../../db/models')
 
 
@@ -16,7 +15,7 @@ const obtenerUsuario = async (req, res) => {
         const idNickName = req.params.idNickName
         const usuario = await User.findByPk(idNickName)
         if (!usuario) {
-            res.status(400).json({ mensaje: 'Usuario no encontrado' })
+            return res.status(400).json({ mensaje: 'Usuario no encontrado' })
         }
         res.status(200).json(usuario)
     } catch {

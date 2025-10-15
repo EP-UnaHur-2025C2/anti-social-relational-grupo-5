@@ -7,10 +7,12 @@ const db = require('../db/models');
 app.use(express.json());
 
 const userRoutes = require('./routes/userRoutes');
-const postRoutes = require('./routes/postRoutes')
+const postRoutes = require('./routes/postRoutes');
+const commentRoutes = require('./routes/commentRoutes');
 
 app.use('/users', userRoutes);
-app.use('/posts', postRoutes)
+app.use('/posts', postRoutes);
+app.use('/comments', commentRoutes);
 
 const PORT = process.env.PORT || 3000
 
