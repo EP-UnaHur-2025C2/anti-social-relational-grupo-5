@@ -3,10 +3,13 @@ const router = Router();
 
 const postController = require('../controllers/postControllers');
 
-router.get('/',postController.obtenerPosts),
-router.get('/:id', postController.obtenerPost);
-router.post('/', postController.crearPost);
-router.put('/:id', postController.actualizarPost);
-router.delete('/:id', postController.eliminarPost);
+const { validarPostId, validarCrearPost, validarActualizarPost } = require('../middlewares/validatePost');
 
-module.exports = router
+router.get('/', postController.obtenerPosts);
+router.get('/:id', validarPostId, postController.obtenerPost);
+router.post('/', validarCrearPost, postController.crearPost);
+router.put('/:id', validarPostId, validarActualizarPost, postController.actualizarPost);
+router.delete('/:id', validarPostId, postController.eliminarPost);
+
+
+module.exports = router;
