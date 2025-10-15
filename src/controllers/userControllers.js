@@ -34,7 +34,7 @@ const crearUsuario = async (req, res) => {
         })
         res.status(201).json(usuario)
     } catch {
-        res.status(500).json({ mensaje: 'Error al obtener usuario' })
+        res.status(500).json({ mensaje: 'Error al crear usuario' })
     }
 }
 
@@ -45,17 +45,17 @@ const actualizarUsuario = async (req, res) => {
         const usuario = await User.findByPk(idNickName);
         if (!usuario) return res.status(404).json({ error: 'Usuario no encontrado' });
         await User.update(
-            { 
-                nickName, 
-                nombre, 
-                apellido 
+            {
+                nickName,
+                nombre,
+                apellido
             },
             {
                 where: {
                     nickName: usuario.nickName
                 }
             }
-            );
+        );
         res.status(200).json(usuario);
     } catch (error) {
         res.status(500).json({ message: "Error al sctualizar el usuario" })
@@ -75,7 +75,7 @@ const eliminarUsuario = async (req, res) => {
         res.status(204).send();
     } catch (error) {
 
-        res.status(500).json({ message: "Error al eliminar el usuario", error: {error} })
+        res.status(500).json({ message: "Error al eliminar el usuario" })
     }
 }
 
