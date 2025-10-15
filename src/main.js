@@ -9,10 +9,12 @@ app.use(express.json());
 const userRoutes = require('./routes/userRoutes');
 const postRoutes = require('./routes/postRoutes');
 const commentRoutes = require('./routes/commentRoutes');
+const tagRoutes = require('./routes/tagRoutes');
 
 app.use('/users', userRoutes);
 app.use('/posts', postRoutes);
 app.use('/comments', commentRoutes);
+app.use('/tags', tagRoutes);
 
 const PORT = process.env.PORT || 3000
 
