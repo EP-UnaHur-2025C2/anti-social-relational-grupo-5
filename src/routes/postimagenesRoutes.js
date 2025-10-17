@@ -1,9 +1,9 @@
 const { Router } = require('express');
 const router = Router();
 
-const postController = require('../controllers/postimagenesControllers');
+const postimagenesController = require('../controllers/postimagenesControllers');
 
-router.get('/',postimagenesController.obtenerPostsimagenes),
+router.get('/', postimagenesController.obtenerPostsimagenes),
 router.get('/:id', postimagenesController.obtenerPostimagen);
 router.post('/', postimagenesController.crearPostimagen);
 router.put('/:id', postimagenesController.actualizarPostimagen);
