@@ -31,7 +31,11 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
       autoIncrement: true
     },
-    fechaPublicacion: DataTypes.DATE,
+    fechaPublicacion: {
+      type: DataTypes.DATE,
+      defaultValue: new Date()
+      
+    },
     descripcion: DataTypes.STRING,
     nickName: {
       type: DataTypes.STRING,
