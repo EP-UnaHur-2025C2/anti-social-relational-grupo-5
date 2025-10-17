@@ -30,7 +30,7 @@ const crearPostimagen = async (req, res) => {
       url,
       idPost
     })
-    res.status(201).json(PostImagenes)
+    res.status(201).json(imagen)
   } catch {
     res.status(500).json({ mensaje: 'Error al crear imagen' })
   }
@@ -68,7 +68,7 @@ const eliminarPostimagen = async (req, res) => {
         idPost: PostImagenes.idPost
       }
     });
-    res.status(204).send();
+    res.status(204).json({ mensaje: "Imagen eliminada correctamente"});
   } catch (error) {
     res.status(500).json({ message: "Error al eliminar el imagen" })
   }

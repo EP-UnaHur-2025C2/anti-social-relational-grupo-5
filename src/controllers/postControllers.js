@@ -6,7 +6,7 @@ const obtenerPosts = async (req, res) => {
     const posts = await Post.findAll()
     res.status(200).json(posts)
   } catch {
-    res.status(500).json({ mensaje: 'Error al obtener posteos' })
+    res.status(500).json({ mensaje: 'Error al obtener posteos.' })
   }
 }
 
@@ -15,11 +15,11 @@ const obtenerPost = async (req, res) => {
     const postId = req.params.id
     const post = await Post.findByPk(postId)
     if (!post) {
-      res.status(400).json({ mensaje: 'Posteo no encontrado' })
+      res.status(400).json({ mensaje: 'Posteo no encontrado.' })
     }
     res.status(200).json(post)
   } catch {
-    res.status(500).json({ mensaje: 'Error al obtener posteo' })
+    res.status(500).json({ mensaje: 'Error al obtener posteo.' })
   }
 }
 
@@ -32,7 +32,7 @@ const crearPost = async (req, res) => {
     })
     res.status(201).json(post)
   } catch {
-    res.status(500).json({ mensaje: 'Error al crear posteo' })
+    res.status(500).json({ mensaje: 'Error al crear posteo.' })
   }
 }
 
@@ -41,7 +41,7 @@ const actualizarPost = async (req, res) => {
     const { id } = req.params;
     const { descripcion } = req.body;
     const post = await Post.findByPk(id);
-    if (!post) return res.status(404).json({ message: 'Posteo no encontrado' });
+    if (!post) return res.status(404).json({ message: 'Posteo no encontrado.' });
     await Post.update(
       {
         descripcion
@@ -54,7 +54,7 @@ const actualizarPost = async (req, res) => {
     );
     res.status(200).json(post);
   } catch (error) {
-    res.status(500).json({ message: "Error al sctualizar el posteo" })
+    res.status(500).json({ message: "Error al actualizar el posteo." })
   }
 }
 
@@ -62,15 +62,15 @@ const eliminarPost = async (req, res) => {
   try {
     const { id } = req.params;
     const post = await Post.findByPk(id);
-    if (!post) return res.status(404).json({ error: 'Posteo no encontrado' });
+    if (!post) return res.status(404).json({ error: 'Posteo no encontrado.' });
     await Post.destroy({
       where: {
         idPost: post.idPost
       }
     });
-    res.status(204).send();
+    res.status(204).json({ message: 'Post eliminado correctamente.'});
   } catch (error) {
-    res.status(500).json({ message: "Error al eliminar el posteo" })
+    res.status(500).json({ message: "Error al eliminar el posteo." })
   }
 }
 

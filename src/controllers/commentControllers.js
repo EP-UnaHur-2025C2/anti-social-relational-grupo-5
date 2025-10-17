@@ -67,9 +67,9 @@ const eliminarComentario = async (req, res) => {
         idComentario: comentario.idComentario
       }
     });
-    res.status(200).send();
+    res.status(204).json({mensaje: 'Comentario eliminado correctamente.'});
   } catch (error) {
-    res.status(500).json({ mensaje: 'Error al eliminar comentario' });
+    res.status(500).json({ mensaje: 'Error al eliminar comentario.' });
   }
 }
 

@@ -1,4 +1,4 @@
-const { User } = require('../../db/models')
+const { User } = require('../../db/models');
 
 
 const obtenerUsuarios = async (req, res) => {
@@ -71,7 +71,7 @@ const eliminarUsuario = async (req, res) => {
                 nickName: usuario.nickName
             }
         });
-        res.status(204).send();
+        res.status(204).json({ mensaje: 'El usuario se elimino correctamente'});
     } catch (error) {
 
         res.status(500).json({ message: "Error al eliminar el usuario" })

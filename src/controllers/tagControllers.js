@@ -5,8 +5,7 @@ const obtenerTags = async (req, res) => {
         const tags = await Tag.findAll();
         res.status(200).json(tags);
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ mensaje: 'Error al obtener los tags' });
+        res.status(500).json({ mensaje: 'Error al obtener los tags.' });
     }
 };
 
@@ -16,12 +15,11 @@ const obtenerTag = async (req, res) => {
         const { id } = req.params;
         const tag = await Tag.findByPk(id);
         if (!tag) {
-            return res.status(404).json({ mensaje: 'Tag no encontrado' });
+            return res.status(404).json({ mensaje: 'Tag no encontrado.' });
         }
         res.status(200).json(tag);
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ mensaje: 'Error al obtener el tag' });
+        res.status(500).json({ mensaje: 'Error al obtener el tag.' });
     }
 };
 
@@ -78,7 +76,7 @@ const eliminarTag = async (req, res) => {
         }
 
         await tag.destroy();
-        res.status(204).send();
+        res.status(204).json({ mensaje: 'El tag se elimino correctamente'});
     } catch (error) {
         console.error(error);
         res.status(500).json({ mensaje: 'Error al eliminar el tag' });
