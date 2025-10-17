@@ -14,7 +14,7 @@ const tagRoutes = require('./routes/tagRoutes');
 
 app.use('/users', userRoutes);
 app.use('/posts', postRoutes);
-app.use('/postsimg', postimagenesRoutes);
+app.use('/postsimagenes', postimagenesRoutes);
 app.use('/comments', commentRoutes);
 app.use('/tags', tagRoutes);
 
