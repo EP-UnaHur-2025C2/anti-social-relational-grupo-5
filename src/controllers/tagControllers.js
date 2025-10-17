@@ -13,10 +13,8 @@ const obtenerTags = async (req, res) => {
 
 const obtenerTag = async (req, res) => {
     try {
-        const { nombre } = req.params;
-        const tag = await Tag.findOne({ 
-            where: { nombre: nombre } 
-        });
+        const { id } = req.params;
+        const tag = await Tag.findByPk(id);
         if (!tag) {
             return res.status(404).json({ mensaje: 'Tag no encontrado' });
         }

@@ -1,3 +1,6 @@
+#Ignorar dependencias.
 node_modules/
+#Ignorar archivos de configuracion local.
 .env/
-data
+#Ignorar base de datos.
+data/
