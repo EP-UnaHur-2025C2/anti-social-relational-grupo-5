@@ -1,4 +1,4 @@
-const { Post } = require('../../db/models')
+const { Post, User } = require('../../db/models')
 
 
 const obtenerPosts = async (req, res) => {
@@ -74,10 +74,29 @@ const eliminarPost = async (req, res) => {
   }
 }
 
+const obtenerPosteosDeUsuario = async (req, res) => {
+  try {
+    const usuarioNickName = req.params.idNickName;
+    const usuario = await User.findByPk(usuarioNickName, {
+      attributes: ['nickName','nombre', 'apellido'],
+      include: [
+        {
+          model: Post,
+          attributes: ['idPost', 'fechaPublicacion', 'descripcion']
+        }
+      ]
+    })
+    res.status(200).json(usuario)
+  } catch (error) {
+    res.status(500).json({ message: `Error al obtener posteos del usuario: ${usuarioNickName}.` })
+  }
+}
+
 module.exports = {
   obtenerPosts,
   obtenerPost,
   crearPost,
   actualizarPost,
-  eliminarPost
+  eliminarPost,
+  obtenerPosteosDeUsuario
 }
