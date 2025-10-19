@@ -1,5 +1,5 @@
 const { where } = require('sequelize');
-const { Comment } = require('../../db/models');
+const { Comment, User } = require('../../db/models');
 
 const obtenerComentarios = async (req, res) => {
   try {
@@ -73,10 +73,32 @@ const eliminarComentario = async (req, res) => {
   }
 }
 
+const obtenerComentariosDeUsuario = async(req, res) => {
+  try {
+    const usuarioNickName = req.params.idNickName;
+    const comentariosDeUsuario = await User.findByPk(usuarioNickName, {
+      attributes: ['nickName', 'nombre', 'apellido'],
+      include: [
+        {
+          model: Comment,
+          attributes: ['idComentario','contenido', 'fechaComentario']
+        }
+      ]
+    });
+    if(!comentariosDeUsuario) return res.status(400).json({mensaje: `Usuario ${usuarioNickName} no encontrado`})
+    res.status(200).json(comentariosDeUsuario);
+  } catch (error) {
+    res.status(500).json({ 
+      mensaje: `Error al obtener comentarios del usuario.`
+    });    
+  }
+}
+
 module.exports = {
   obtenerComentarios,
   obtenerComentario,
   crearComentario,
   modificarComentario,
-  eliminarComentario
+  eliminarComentario,
+  obtenerComentariosDeUsuario
 }

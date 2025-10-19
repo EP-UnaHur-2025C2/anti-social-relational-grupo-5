@@ -3,6 +3,7 @@ const router = Router();
 
 const userController = require('../controllers/userControllers');
 const { obtenerPosteosDeUsuario } = require('../controllers/postControllers');
+const { obtenerComentariosDeUsuario } = require('../controllers/commentControllers');
 
 const { validarNickNameParams, validarCrearUsuario } = require('../middlewares/validateUser')
 
@@ -13,5 +14,6 @@ router.put('/:idNickName', validarNickNameParams, userController.actualizarUsuar
 router.delete('/:idNickName', validarNickNameParams, userController.eliminarUsuario);
 
 router.get('/:idNickName/posts', validarNickNameParams, obtenerPosteosDeUsuario );
+router.get('/:idNickName/comments', validarNickNameParams, obtenerComentariosDeUsuario );
 //Validar los idNickName
 module.exports = router

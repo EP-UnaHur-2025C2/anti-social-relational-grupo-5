@@ -62,7 +62,7 @@ const eliminarPost = async (req, res) => {
   try {
     const { id } = req.params;
     const post = await Post.findByPk(id);
-    if (!post) return res.status(404).json({ error: 'Posteo no encontrado.' });
+    if (!post) return res.status(404).json({ mensaje: 'Posteo no encontrado.' });
     await Post.destroy({
       where: {
         idPost: post.idPost
@@ -86,9 +86,10 @@ const obtenerPosteosDeUsuario = async (req, res) => {
         }
       ]
     })
+    if (!usuario) return res.status(404).json({ mensaje: `usuario: ${usuarioNickName} no econtrado` });
     res.status(200).json(usuario)
   } catch (error) {
-    res.status(500).json({ message: `Error al obtener posteos del usuario: ${usuarioNickName}.` })
+    res.status(500).json({ message: `Error al obtener posteos del usuario.` })
   }
 }
 
