@@ -1,97 +1,129 @@
-const { Post, User } = require('../../db/models')
-
+const { Post, User, Tag } = require("../../db/models");
 
 const obtenerPosts = async (req, res) => {
   try {
-    const posts = await Post.findAll()
-    res.status(200).json(posts)
+    const posts = await Post.findAll();
+    res.status(200).json(posts);
   } catch {
-    res.status(500).json({ mensaje: 'Error al obtener posteos.' })
+    res.status(500).json({ mensaje: "Error al obtener posteos." });
   }
-}
+};
 
 const obtenerPost = async (req, res) => {
   try {
-    const postId = req.params.id
-    const post = await Post.findByPk(postId)
+    const postId = req.params.id;
+    const post = await Post.findByPk(postId,{include: Tag});
     if (!post) {
-      res.status(400).json({ mensaje: 'Posteo no encontrado.' })
+      res.status(400).json({ mensaje: "Posteo no encontrado." });
     }
-    res.status(200).json(post)
+    res.status(200).json(post);
   } catch {
-    res.status(500).json({ mensaje: 'Error al obtener posteo.' })
+    res.status(500).json({ mensaje: "Error al obtener posteo." });
   }
-}
+};
 
 const crearPost = async (req, res) => {
   try {
-    const { descripcion, nickName } = req.body
+    const { descripcion, nickName } = req.body;
     const post = await Post.create({
       descripcion,
-      nickName
-    })
-    res.status(201).json(post)
+      nickName,
+    });
+    res.status(201).json(post);
   } catch {
-    res.status(500).json({ mensaje: 'Error al crear posteo.' })
+    res.status(500).json({ mensaje: "Error al crear posteo." });
   }
-}
+};
 
 const actualizarPost = async (req, res) => {
   try {
     const { id } = req.params;
     const { descripcion } = req.body;
     const post = await Post.findByPk(id);
-    if (!post) return res.status(404).json({ message: 'Posteo no encontrado.' });
+    if (!post)
+      return res.status(404).json({ message: "Posteo no encontrado." });
     await Post.update(
       {
-        descripcion
+        descripcion,
       },
       {
         where: {
-          idPost: post.idPost
-        }
+          idPost: post.idPost,
+        },
       }
     );
     res.status(200).json(post);
   } catch (error) {
-    res.status(500).json({ message: "Error al actualizar el posteo." })
+    res.status(500).json({ message: "Error al actualizar el posteo." });
   }
-}
+};
 
 const eliminarPost = async (req, res) => {
   try {
     const { id } = req.params;
     const post = await Post.findByPk(id);
-    if (!post) return res.status(404).json({ mensaje: 'Posteo no encontrado.' });
+    if (!post)
+      return res.status(404).json({ mensaje: "Posteo no encontrado." });
     await Post.destroy({
       where: {
-        idPost: post.idPost
-      }
+        idPost: post.idPost,
+      },
     });
-    res.status(204).json({ message: 'Post eliminado correctamente.'});
+    res.status(204).json({ message: "Post eliminado correctamente." });
   } catch (error) {
-    res.status(500).json({ message: "Error al eliminar el posteo." })
+    res.status(500).json({ message: "Error al eliminar el posteo." });
   }
-}
+};
 
 const obtenerPosteosDeUsuario = async (req, res) => {
   try {
     const usuarioNickName = req.params.idNickName;
     const usuario = await User.findByPk(usuarioNickName, {
-      attributes: ['nickName','nombre', 'apellido'],
+      attributes: ["nickName", "nombre", "apellido"],
       include: [
         {
           model: Post,
-          attributes: ['idPost', 'fechaPublicacion', 'descripcion']
-        }
-      ]
-    })
-    if (!usuario) return res.status(404).json({ mensaje: `usuario: ${usuarioNickName} no econtrado` });
-    res.status(200).json(usuario)
+          attributes: ["idPost", "fechaPublicacion", "descripcion"],
+        },
+      ],
+    });
+    if (!usuario)
+      return res.status(404).json({ mensaje: `usuario: ${usuarioNickName} no encontrado` });
+    res.status(200).json(usuario);
   } catch (error) {
-    res.status(500).json({ message: `Error al obtener posteos del usuario.` })
+    res.status(500).json({ message: `Error al obtener posteos del usuario.` });
   }
-}
+};
+
+const asociarTags = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { idTag } = req.body;
+
+    const post = await Post.findByPk(id);
+    if (!post) return res.status(404).json({ mensaje: "Post no encontrado" });
+
+    await post.setTags(idTag);
+    const postConTags = await Post.findByPk(id, { include: Tag });
+    res.status(200).json(postConTags);
+  } catch (error) {
+    res.status(500).json({ message: "Error al asociar tags"});
+  }
+};
+
+const quitarTagDelPost = async (req, res) => {
+  try {
+    const { id, idTag } = req.params;
+    const post = await Post.findByPk(id);
+    if (!post) return res.status(404).json({ mensaje: 'Post no encontrado' });
+
+    await post.removeTag(idTag); 
+    const postConTags = await Post.findByPk(id, { include: Tag });
+    res.status(200).json(postConTags);
+  } catch (error) {
+    res.status(500).json({ message: 'Error al quitar tag del post'});
+  }
+};
 
 module.exports = {
   obtenerPosts,
@@ -99,5 +131,7 @@ module.exports = {
   crearPost,
   actualizarPost,
   eliminarPost,
-  obtenerPosteosDeUsuario
-}
+  obtenerPosteosDeUsuario,
+  asociarTags,
+  quitarTagDelPost
+};
