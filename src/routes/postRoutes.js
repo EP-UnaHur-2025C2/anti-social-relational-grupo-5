@@ -1,6 +1,7 @@
 const { Router } = require("express");
 const router = Router();
 
+
 const postController = require("../controllers/postControllers");
 
 const {
@@ -17,6 +18,7 @@ router.delete("/:id", validarPostId, postController.eliminarPost);
 
 router.post("/:id/tags", postController.asociarTags);
 router.delete('/:id/tags/:idTag', postController.quitarTagDelPost);
+
 
 
 module.exports = router;
