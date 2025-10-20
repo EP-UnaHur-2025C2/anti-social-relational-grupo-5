@@ -70,3 +70,64 @@ Los sponsors definieron los siguientes nombres y descripciones para las entidade
 - Hace el upload de las imganes que se asocian a un POST que lo guarden en una carpeta de imagenes dentro del servidor web.
 - ¿Cómo modelarías que un usuario pueda "seguir" a otros usuarios, y a su vez ser seguido por muchos? Followers
 - Con la información de los post no varia muy seguido que estrategias podrian utilizar la que la información no sea constantemente consultada desde la base de datos.
+
+# 🧠 Anti-Social Relational - Grupo 5
+
+Este proyecto fue desarrollado como parte del trabajo práctico de Estrategias de persistencia (EDP).
+
+---
+
+## 👥 Trabajo realizado por
+
+- **Alan Foa**
+- **Gabriel Nonis**
+- **German Bianco**
+- **Lucas Cardona**
+- **Nahuel Negreti Carballo**
+
+---
+
+## 📌 Documentación de la API
+
+Una vez iniciado el servidor, podés acceder a todas las rutas disponibles desde:
+
+http://localhost:3001/api-docs
+
+Esto abrirá la interfaz de Swagger para explorar y probar los endpoints disponibles.
+
+---
+
+# 📝 Uso de la Colección Postman - UnaHur Anti-Social Net MVP
+
+## ✅ Requisitos
+
+- Servidor corriendo en `localhost:3001` (`npm run dev`)
+- Borrar `data/dataBase.sqlite` para pruebas limpias
+- Postman instalado (app o extensión en VS Code)
+
+## 📥 Importar Colección
+
+1. Abrí Postman o su extensión en VS Code
+2. Importá el archivo `UnaHur_AntiSocialNet_MVP_Collection.json` desde `docs/postman`
+
+## 🧪 Ejecución Manual (Recomendada)
+
+Ejecutá las peticiones en orden (1 a 8):
+
+| # | Método | Endpoint         | Resultado Esperado                     |
+|---|--------|------------------|----------------------------------------|
+| 1 | POST   | `/users`         | 201 Created                            |
+| 2 | POST   | `/posts`         | 201 Created                            |
+| 3 | POST   | `/comments`      | 201 Created                            |
+| 4 | POST   | `/comments`      | 201 Created                            |
+| 5 | GET    | `/comments`      | 200 OK (2 elementos)                   |
+| 6 | DELETE | `/comments/2`    | 204 No Content                         |
+| 7 | GET    | `/comments`      | 200 OK (1 elemento)                    |
+| 8 | PUT    | `/comments/1`    | 200 OK (contenido actualizado)         |
+
+✅ Si todos los resultados son correctos, el CRUD funciona correctamente.
+
+## ⚙️ Ejecución Automática (Opcional)
+
+- Clic derecho en la colección → **Run Collection**
+- Postman ejecutará todo en orden y mostrará el informe

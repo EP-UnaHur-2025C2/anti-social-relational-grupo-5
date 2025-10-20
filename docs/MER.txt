@@ -1,0 +1,5 @@
+User(nickName, Nombre, Apellido)
+Comment(idComentario, fechaComentario, visibilidad, contenido, idPost, nickName)
+Post(idPost, fechaPublicacion, descripción, nickName)
+PostImagenes(idImagen, url, idPost)
+Tag(idTag,nombre)
