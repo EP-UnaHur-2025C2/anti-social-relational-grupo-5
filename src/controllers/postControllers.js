@@ -1,4 +1,4 @@
-const { Post, User, Tag, Comment, Sequelize, postImagenes} = require("../../db/models");
+const { Post, User, Tag, Comment, Sequelize, postImagenes } = require("../../db/models");
 const { Op } = Sequelize;
 
 const obtenerPosts = async (req, res) => {
@@ -11,43 +11,52 @@ const obtenerPosts = async (req, res) => {
 };
 
 const obtenerPost = async (req, res) => {
-  try {
-    const postId = req.params.id;
+  try {
+    const postId = req.params.id;
 
-    // Lee el .env o usa 6 meses por defecto
-    const mesesMaximos = parseInt(process.env.COMMENT_EXPIRATION_MONTHS, 10) || 6;
+    // Lee el .env o usa 6 meses por defecto
+    const mesesMaximos = parseInt(process.env.COMMENT_EXPIRATION_MONTHS, 10) || 6;
 
-    // Calcula la fecha limite
-    const fechaLimite = new Date();
-    fechaLimite.setMonth(fechaLimite.getMonth() - mesesMaximos);
+    // Calcula la fecha limite
+    const fechaLimite = new Date();
+    fechaLimite.setMonth(fechaLimite.getMonth() - mesesMaximos);
 
-    // Modifica la consulta para que incluya Tags Y Comentarios filtrados
-    const post = await Post.findByPk(postId, {
-      include: [
-        {
-          model: Tag, 
-        },
-        {
-          model: Comment,
-          where: {
-            // filtra por fecha
-            fechaComentario: {
-              [Op.gte]: fechaLimite 
-            },
-          },
-          required: false, 
-        },
-      ],
-    });
+    // Modifica la consulta para que incluya Tags Y Comentarios filtrados
+    const post = await Post.findByPk(postId, {
+      attributes: ['idPost', 'nickName', 'descripcion', 'fechaPublicacion'],
+      include: [
+        {
+          model: Tag,
+          attributes: ['idTag', 'nombre'],
+          through: { attributes: [] }
+        },
+        {
+          model: postImagenes,
+          attributes: ['idImagen', 'url']
+        },
+        {
+          model: Comment,
+          attributes: ['idComentario', 'contenido', 'fechaComentario'],
+          where: {
+            // filtra por fecha
+            fechaComentario: {
+              [Op.gte]: fechaLimite
+            },
+          },
+          required: false,
+          order: [['columna', 'ASC']]
+        },
+      ],
+    });
 
-    if (!post) {
-      res.status(400).json({ mensaje: "Posteo no encontrado." });
-    }
-    res.status(200).json(post);
-  } catch (error) { 
-    console.error(error); 
-    res.status(500).json({ mensaje: "Error al obtener posteo.", error: error.message });
-  }
+    if (!post) {
+      res.status(400).json({ mensaje: "Posteo no encontrado." });
+    }
+    res.status(200).json(post);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ mensaje: "Error al obtener posteo.", error: error.message });
+  }
 };
 
 const crearPost = async (req, res) => {
@@ -106,6 +115,11 @@ const eliminarPost = async (req, res) => {
 const obtenerPosteosDeUsuario = async (req, res) => {
   try {
     const usuarioNickName = req.params.idNickName;
+    // Lee el .env o usa 6 meses por defecto
+    const mesesMaximos = parseInt(process.env.COMMENT_EXPIRATION_MONTHS, 10) || 6;
+    // Calcula la fecha limite
+    const fechaLimite = new Date();
+    fechaLimite.setMonth(fechaLimite.getMonth() - mesesMaximos);
     const usuario = await User.findByPk(usuarioNickName, {
       attributes: ["nickName", "nombre", "apellido"],
       include: [
@@ -114,10 +128,23 @@ const obtenerPosteosDeUsuario = async (req, res) => {
           attributes: ["idPost", "fechaPublicacion", "descripcion"],
           include: [{
             model: Tag,
-            attributes: ['nombre']
-          },{
+            attributes: ['idTag', 'nombre'],
+            through: { attributes: [] }
+          }, {
             model: postImagenes,
-            attributes: ['url']
+            attributes: ['idImagen', 'url']
+          },
+          {
+            model: Comment,
+            attributes: ['idComentario', 'contenido', 'fechaComentario'],
+            where: {
+              // filtra por fecha
+              fechaComentario: {
+                [Op.gte]: fechaLimite
+              },
+            },
+            required: false,
+            order: [['columna', 'ASC']]
           }]
         },
       ],
@@ -143,7 +170,7 @@ const asociarTags = async (req, res) => {
     const postConTags = await Post.findByPk(id, { include: Tag });
     res.status(200).json(postConTags);
   } catch (error) {
-    res.status(500).json({ message: "Error al asociar tags"});
+    res.status(500).json({ message: "Error al asociar tags" });
   }
 };
 
@@ -153,30 +180,30 @@ const quitarTagDelPost = async (req, res) => {
     const post = await Post.findByPk(id);
     if (!post) return res.status(404).json({ mensaje: 'Post no encontrado' });
 
-    await post.removeTag(idTag); 
+    await post.removeTag(idTag);
     const postConTags = await Post.findByPk(id, { include: Tag });
     res.status(200).json(postConTags);
   } catch (error) {
-    res.status(500).json({ message: 'Error al quitar tag del post'});
+    res.status(500).json({ message: 'Error al quitar tag del post' });
   }
 };
 
 const crearUserPost = async (req, res) => {
   try {
     const { idNickName } = req.params;
-    const { descripcion, tagName, url} = req.body;
+    const { descripcion, tagName, url } = req.body;
     const usuario = await User.findByPk(idNickName);
-    if(!usuario) return res.status(404).json({ mensaje: `usuario ${idNickName} no encontrado` });
+    if (!usuario) return res.status(404).json({ mensaje: `usuario ${idNickName} no encontrado` });
     const post = await Post.create({
       descripcion,
       nickName: usuario.nickName
     });
-    if(tagName) {
-      const tag = await Tag.create({nombre: tagName});
+    if (tagName) {
+      const tag = await Tag.create({ nombre: tagName });
       await post.addTag(tag)
     }
-    if(url) {
-      const postImg = await postImagenes.create({
+    if (url) {
+      await postImagenes.create({
         url: url,
         idPost: post.idPost
       })
@@ -184,7 +211,7 @@ const crearUserPost = async (req, res) => {
     res.status(201).json(post);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Error al crear el post de usuario'});    
+    res.status(500).json({ message: 'Error al crear el post de usuario' });
   }
 }
 

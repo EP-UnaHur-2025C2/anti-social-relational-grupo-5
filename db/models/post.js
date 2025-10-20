@@ -1,5 +1,4 @@
 'use strict';
-const { allow } = require('joi');
 const {
   Model
 } = require('sequelize');
@@ -34,7 +33,6 @@ module.exports = (sequelize, DataTypes) => {
     fechaPublicacion: {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW
-      
     },
     descripcion: DataTypes.STRING,
     nickName: {

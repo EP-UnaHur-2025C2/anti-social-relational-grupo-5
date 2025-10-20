@@ -1,5 +1,4 @@
 'use strict';
-const { date } = require('joi');
 const {
   Model
 } = require('sequelize');
@@ -27,7 +26,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     fechaComentario: {
       type: DataTypes.DATE,
-      defaultValue: new Date()
+      defaultValue: DataTypes.NOW
     },
     contenido: {
       type: DataTypes.STRING,
