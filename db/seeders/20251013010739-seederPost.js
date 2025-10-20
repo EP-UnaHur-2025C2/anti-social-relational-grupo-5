@@ -8,24 +8,21 @@ module.exports = {
       descripcion: 'Primer post',
       nickName:'SuperJuan',
       createdAt: new Date(),
-      updatedAt: new Date(),
+      updatedAt: new Date()
     },
     {
       fechaPublicacion: Date(),
       descripcion: 'Segundo post',
       nickName:'SuperPablo',
       createdAt: new Date(),
-      updatedAt: new Date(),
+      updatedAt: new Date()
     }
   ], {});
   },
 
   async down(queryInterface, Sequelize) {
-    /**
-     * Add commands to revert seed here.
-     *
-     * Example:
-     * await queryInterface.bulkDelete('People', null, {});
-     */
+  await queryInterface.bulkDelete('Posts', {
+      descripcion: ['Primer post', 'Segundo post']
+    }, {});
   }
 };
