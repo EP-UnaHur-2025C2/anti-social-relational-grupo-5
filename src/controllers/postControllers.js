@@ -1,4 +1,5 @@
-const { Post, User, Tag, postImagenes} = require("../../db/models");
+const { Post, User, Tag, Comment, Sequelize, postImagenes} = require("../../db/models");
+const { Op } = Sequelize;
 
 const obtenerPosts = async (req, res) => {
   try {
@@ -10,16 +11,43 @@ const obtenerPosts = async (req, res) => {
 };
 
 const obtenerPost = async (req, res) => {
-  try {
-    const postId = req.params.id;
-    const post = await Post.findByPk(postId,{include: Tag});
-    if (!post) {
-      res.status(400).json({ mensaje: "Posteo no encontrado." });
-    }
-    res.status(200).json(post);
-  } catch {
-    res.status(500).json({ mensaje: "Error al obtener posteo." });
-  }
+  try {
+    const postId = req.params.id;
+
+    // Lee el .env o usa 6 meses por defecto
+    const mesesMaximos = parseInt(process.env.COMMENT_EXPIRATION_MONTHS, 10) || 6;
+
+    // Calcula la fecha limite
+    const fechaLimite = new Date();
+    fechaLimite.setMonth(fechaLimite.getMonth() - mesesMaximos);
+
+    // Modifica la consulta para que incluya Tags Y Comentarios filtrados
+    const post = await Post.findByPk(postId, {
+      include: [
+        {
+          model: Tag, 
+        },
+        {
+          model: Comment,
+          where: {
+            // filtra por fecha
+            fechaComentario: {
+              [Op.gte]: fechaLimite 
+            },
+          },
+          required: false, 
+        },
+      ],
+    });
+
+    if (!post) {
+      res.status(400).json({ mensaje: "Posteo no encontrado." });
+    }
+    res.status(200).json(post);
+  } catch (error) { 
+    console.error(error); 
+    res.status(500).json({ mensaje: "Error al obtener posteo.", error: error.message });
+  }
 };
 
 const crearPost = async (req, res) => {
