@@ -2,10 +2,10 @@ const { Router } = require('express');
 const router = Router();
 
 const userController = require('../controllers/userControllers');
-const { obtenerPosteosDeUsuario } = require('../controllers/postControllers');
+const { obtenerPosteosDeUsuario, crearUserPost } = require('../controllers/postControllers');
 const { obtenerComentariosDeUsuario } = require('../controllers/commentControllers');
 
-const { validarNickNameParams, validarCrearUsuario } = require('../middlewares/validateUser')
+const { validarNickNameParams, validarCrearUsuario, validarCrearUserPost } = require('../middlewares/validateUser')
 
 router.get('/', userController.obtenerUsuarios );
 router.get('/:idNickName', validarNickNameParams, userController.obtenerUsuario);
@@ -15,5 +15,6 @@ router.delete('/:idNickName', validarNickNameParams, userController.eliminarUsua
 
 router.get('/:idNickName/posts', validarNickNameParams, obtenerPosteosDeUsuario );
 router.get('/:idNickName/comments', validarNickNameParams, obtenerComentariosDeUsuario );
+router.post('/:idNickName/post', validarNickNameParams, validarCrearUserPost, crearUserPost);
 //Validar los idNickName
 module.exports = router

@@ -33,7 +33,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     fechaPublicacion: {
       type: DataTypes.DATE,
-      defaultValue: new Date()
+      defaultValue: DataTypes.NOW
       
     },
     descripcion: DataTypes.STRING,
