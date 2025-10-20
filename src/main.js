@@ -17,7 +17,6 @@ const postimagenesRoutes = require('./routes/postimagenesRoutes');
 const commentRoutes = require('./routes/commentRoutes');
 const tagRoutes = require('./routes/tagRoutes');
 
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 app.use('/users', userRoutes);
 app.use('/posts', postRoutes);
 app.use('/postsimagenes', postimagenesRoutes);
@@ -25,6 +24,14 @@ app.use('/comments', commentRoutes);
 app.use('/tags', tagRoutes);
 
 const PORT = process.env.PORT || 3000
+
+swaggerDocument.servers = [
+  {
+    url: `http://localhost:${PORT}`,
+    description: `Servidor de desarrollo (corriendo en el puerto ${PORT})`
+  }
+];
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 
 app.listen(PORT, async()=>{
     console.log(`El servidor esta corriendo en el puerto ${PORT}`)
