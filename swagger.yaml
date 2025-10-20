@@ -1,0 +1,694 @@
+openapi: 3.0.0
+info:
+  title: "UnaHur - Anti-Social Net API"
+  description: "Documentación para la API de la red social Anti-Social Net."
+  version: "1.0.0"
+
+servers:
+  - url: "http://localhost:3001"
+    description: "Servidor de desarrollo local"
+
+tags:
+  - name: "Users"
+    description: "Operaciones relacionadas con los usuarios y sus posts/comentarios."
+  - name: "Posts"
+    description: "Operaciones para gestionar los posts y su relación con los tags."
+  - name: "Tags"
+    description: "CRUD completo para las etiquetas (tags)."
+  - name: "Comments"
+    description: "Operaciones para gestionar los comentarios."
+  - name: "PostImages"
+    description: "Operaciones para las imágenes asociadas a los posts."
+
+paths:
+  /users:
+    get:
+      tags: [Users]
+      summary: "Obtener todos los usuarios"
+      responses:
+        '200':
+          description: "Lista de todos los usuarios."
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        '500':
+          description: "Error al obtener usuarios."
+    post:
+      tags: [Users]
+      summary: "Crear un nuevo usuario"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserInput'
+      responses:
+        '201':
+          description: "Usuario creado exitosamente."
+        '500':
+          description: "Error al crear usuario."
+
+  /users/{idNickName}:
+    get:
+      tags: [Users]
+      summary: "Obtener un usuario por su nickName"
+      parameters:
+        - name: "idNickName"
+          in: "path"
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: "Datos del usuario."
+        '400':
+          description: "Usuario no encontrado."
+        '500':
+          description: "Error al obtener usuario."
+    put:
+      tags: [Users]
+      summary: "Actualizar un usuario por su nickName"
+      parameters:
+        - name: "idNickName"
+          in: "path"
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserInput'
+      responses:
+        '200':
+          description: "Usuario actualizado."
+        '404':
+          description: "Usuario no encontrado."
+        '500':
+          description: "Error al actualizar el usuario."
+    delete:
+      tags: [Users]
+      summary: "Eliminar un usuario por su nickName"
+      parameters:
+        - name: "idNickName"
+          in: "path"
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: "El usuario se eliminó correctamente."
+        '404':
+          description: "Usuario no encontrado."
+        '500':
+          description: "Error al eliminar el usuario."
+
+  /users/{idNickName}/posts:
+    get:
+      tags: [Users]
+      summary: "Obtener todos los posts de un usuario específico"
+      parameters:
+        - name: "idNickName"
+          in: "path"
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: "Lista de posts del usuario."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserWithPosts'
+        '404':
+          description: "Usuario no encontrado."
+        '500':
+          description: "Error al obtener posteos del usuario."
+
+  /users/{idNickName}/comments:
+    get:
+      tags: [Users]
+      summary: "Obtener todos los comentarios de un usuario específico"
+      parameters:
+        - name: "idNickName"
+          in: "path"
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: "Lista de comentarios del usuario."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserWithComments'
+        '404':
+          description: "Usuario no encontrado."
+        '500':
+          description: "Error al obtener comentarios del usuario."
+
+  /posts:
+    get:
+      tags: [Posts]
+      summary: "Obtener todos los posts"
+      responses:
+        '200':
+          description: "Lista de todos los posts."
+        '500':
+          description: "Error al obtener posteos."
+    post:
+      tags: [Posts]
+      summary: "Crear un nuevo post"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostInput'
+      responses:
+        '201':
+          description: "Post creado exitosamente."
+        '500':
+          description: "Error al crear posteo."
+
+  /posts/{id}:
+    get:
+      tags: [Posts]
+      summary: "Obtener un post por ID con sus tags y comentarios recientes"
+      description: "Devuelve los detalles de un post, incluyendo todos sus tags asociados y los comentarios que no superen los 6 meses de antigüedad."
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: "Datos del post con sus tags y comentarios."
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Post'
+                  - type: object
+                    properties:
+                      Tags:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Tag'
+                      Comments:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Comment'
+        '400':
+          description: "Posteo no encontrado."
+        '500':
+          description: "Error al obtener posteo."
+    put:
+      tags: [Posts]
+      summary: "Actualizar la descripción de un post"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                descripcion:
+                  type: string
+              example:
+                descripcion: "Contenido actualizado del post."
+      responses:
+        '200':
+          description: "Post actualizado."
+        '404':
+          description: "Posteo no encontrado."
+        '500':
+          description: "Error al actualizar el posteo."
+    delete:
+      tags: [Posts]
+      summary: "Eliminar un post por su ID"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: "Post eliminado correctamente."
+        '404':
+          description: "Posteo no encontrado."
+        '500':
+          description: "Error al eliminar el posteo."
+
+  /posts/{id}/tags:
+    post:
+      tags: [Posts]
+      summary: "Asociar uno o más tags a un post"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                idTag:
+                  type: array
+                  items:
+                    type: integer
+              example:
+                idTag: [1, 5, 10]
+      responses:
+        '200':
+          description: "Tags asociados correctamente."
+        '404':
+          description: "Post no encontrado."
+        '500':
+          description: "Error al asociar tags."
+
+  /posts/{id}/tags/{idTag}:
+    delete:
+      tags: [Posts]
+      summary: "Quitar un tag específico de un post"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          schema:
+            type: integer
+        - name: "idTag"
+          in: "path"
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: "Tag quitado correctamente."
+        '404':
+          description: "Post no encontrado."
+        '500':
+          description: "Error al quitar tag del post."
+
+  /tags:
+    get:
+      tags: [Tags]
+      summary: "Obtener todos los tags"
+      responses:
+        '200':
+          description: "Lista de tags."
+        '500':
+          description: "Error al obtener los tags."
+    post:
+      tags: [Tags]
+      summary: "Crear un nuevo tag (evita duplicados)"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nombre:
+                  type: string
+              example:
+                nombre: "JavaScript"
+      responses:
+        '201':
+          description: "Tag creado exitosamente."
+        '200':
+          description: "Este tag ya existe."
+        '400':
+          description: "El nombre del tag es requerido."
+        '500':
+          description: "Error interno del servidor."
+
+  /tags/{id}:
+    get:
+      tags: [Tags]
+      summary: "Obtener un tag por su ID"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: "Datos del tag."
+        '404':
+          description: "Tag no encontrado."
+        '500':
+          description: "Error al obtener el tag."
+    put:
+      tags: [Tags]
+      summary: "Actualizar un tag por su ID"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nombre:
+                  type: string
+              example:
+                nombre: "NodeJS"
+      responses:
+        '200':
+          description: "Tag actualizado correctamente."
+        '404':
+          description: "Tag no encontrado para actualizar."
+        '500':
+          description: "Error al actualizar el tag."
+    delete:
+      tags: [Tags]
+      summary: "Eliminar un tag por su ID"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: "El tag se eliminó correctamente."
+        '404':
+          description: "Tag no encontrado para eliminar."
+        '500':
+          description: "Error al eliminar el tag."
+
+  /comments:
+    get:
+      tags: [Comments]
+      summary: "Obtener todos los comentarios"
+      responses:
+        '200':
+          description: "Lista de comentarios."
+        '500':
+          description: "Error al obtener comentarios."
+    post:
+      tags: [Comments]
+      summary: "Crear un nuevo comentario"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommentInput'
+      responses:
+        '201':
+          description: "Comentario creado."
+        '500':
+          description: "Error al crear comentario."
+
+  /comments/{idComment}:
+    get:
+      tags: [Comments]
+      summary: "Obtener un comentario por su ID"
+      parameters:
+        - name: "idComment"
+          in: "path"
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: "Datos del comentario."
+        '404':
+          description: "Comentario no encontrado."
+        '500':
+          description: "Error al obtener comentario."
+    put:
+      tags: [Comments]
+      summary: "Modificar el contenido de un comentario"
+      parameters:
+        - name: "idComment"
+          in: "path"
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                contenido:
+                  type: string
+              example:
+                contenido: "Este es el nuevo contenido."
+      responses:
+        '200':
+          description: "Comentario modificado."
+        '404':
+          description: "Comentario no encontrado."
+        '500':
+          description: "Error al modificar el comentario."
+    delete:
+      tags: [Comments]
+      summary: "Eliminar un comentario"
+      parameters:
+        - name: "idComment"
+          in: "path"
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: "Comentario eliminado correctamente."
+        '404':
+          description: "Comentario no encontrado."
+        '500':
+          description: "Error al eliminar comentario."
+
+  /postimages:
+    get:
+      tags: [PostImages]
+      summary: "Obtener todas las imágenes de los posts"
+      responses:
+        '200':
+          description: "Lista de imágenes."
+        '500':
+          description: "Error al obtener imagen."
+    post:
+      tags: [PostImages]
+      summary: "Añadir una nueva imagen a un post"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostImageInput'
+      responses:
+        '201':
+          description: "Imagen creada y asociada."
+        '500':
+          description: "Error al crear imagen."
+
+  /postimages/{id}:
+    get:
+      tags: [PostImages]
+      summary: "Obtener una imagen por su ID"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: "Datos de la imagen."
+        '400':
+          description: "Imagen no encontrada."
+        '500':
+          description: "Error al obtener imagen."
+    put:
+      tags: [PostImages]
+      summary: "Actualizar la URL de una imagen"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                url:
+                  type: string
+              example:
+                url: "http://example.com/new_image.jpg"
+      responses:
+        '200':
+          description: "Imagen actualizada."
+        '404':
+          description: "Imagen no encontrada."
+        '500':
+          description: "Error al actualizar la imagen."
+    delete:
+      tags: [PostImages]
+      summary: "Eliminar una imagen"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: "Imagen eliminada correctamente."
+        '404':
+          description: "Imagen no encontrada."
+        '500':
+          description: "Error al eliminar la imagen."
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        nickName:
+          type: string
+        nombre:
+          type: string
+        apellido:
+          type: string
+    UserInput:
+      type: object
+      properties:
+        nickName:
+          type: string
+        nombre:
+          type: string
+        apellido:
+          type: string
+      example:
+        nickName: "SuperJuan"
+        nombre: "Juan"
+        apellido: "Perez"
+    Post:
+      type: object
+      properties:
+        idPost:
+          type: integer
+        descripcion:
+          type: string
+        nickName:
+          type: string
+    PostInput:
+      type: object
+      properties:
+        descripcion:
+          type: string
+        nickName:
+          type: string
+      example:
+        descripcion: "¡Mi nuevo post desde la API!"
+        nickName: "SuperJuan"
+    Tag:
+      type: object
+      properties:
+        idTag:
+          type: integer
+        nombre:
+          type: string
+    Comment:
+      type: object
+      properties:
+        idComentario:
+          type: integer
+        contenido:
+          type: string
+        fechaComentario:
+          type: string
+          format: date-time
+        idPost:
+          type: integer
+        nickName:
+          type: string
+    CommentInput:
+      type: object
+      properties:
+        contenido:
+          type: string
+        idPost:
+          type: integer
+        nickName:
+          type: string
+      example:
+        contenido: "¡Qué buen post!"
+        idPost: 1
+        nickName: "SuperPablo"
+    PostImage:
+      type: object
+      properties:
+        idImagen:
+          type: integer
+        url:
+          type: string
+        idPost:
+          type: integer
+    PostImageInput:
+      type: object
+      properties:
+        url:
+          type: string
+        idPost:
+          type: integer
+      example:
+        url: "http://example.com/image.jpg"
+        idPost: 1
+    UserWithPosts:
+      type: object
+      properties:
+        nickName:
+          type: string
+        nombre:
+          type: string
+        apellido:
+          type: string
+        Posts:
+          type: array
+          items:
+            $ref: '#/components/schemas/Post'
+    UserWithComments:
+      type: object
+      properties:
+        nickName:
+          type: string
+        nombre:
+          type: string
+        apellido:
+          type: string
+        Comments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Comment'
