@@ -10,7 +10,7 @@ const cors = require('cors')
 app.use(express.json());
 app.use(cors());
 
-const swaggerDocument = YAML.load('./swagger.yaml')
+const swaggerDocument = YAML.load('./docs/swagger.yaml')
 const userRoutes = require('./routes/userRoutes');
 const postRoutes = require('./routes/postRoutes');
 const postimagenesRoutes = require('./routes/postimagenesRoutes');
