@@ -129,6 +129,31 @@ paths:
         '500':
           description: "Error al obtener posteos del usuario."
 
+  /users/{idNickName}/post:
+    post:
+      tags: [Users]
+      summary: "Crear un post para un usuario (con tag e imagen opcionales)"
+      description: "Permite crear un post, un nuevo tag y una imagen asociada, todo en una sola petición para un usuario específico."
+      parameters:
+        - name: "idNickName"
+          in: "path"
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserPostInput'
+      responses:
+        '201':
+          description: "Post creado exitosamente."
+        '404':
+          description: "Usuario no encontrado."
+        '500':
+          description: "Error al crear el post de usuario."
+
   /users/{idNickName}/comments:
     get:
       tags: [Users]
@@ -162,7 +187,7 @@ paths:
           description: "Error al obtener posteos."
     post:
       tags: [Posts]
-      summary: "Crear un nuevo post"
+      summary: "Crear un nuevo post (forma básica)"
       requestBody:
         required: true
         content:
@@ -666,6 +691,21 @@ components:
       example:
         url: "http://example.com/image.jpg"
         idPost: 1
+    UserPostInput:
+      type: object
+      properties:
+        descripcion:
+          type: string
+        tagName:
+          type: string
+          description: "Nombre del nuevo tag a crear (opcional)."
+        url:
+          type: string
+          description: "URL de la imagen a asociar (opcional)."
+      example:
+        descripcion: "Un post increíble creado desde el endpoint de usuario."
+        tagName: "nuevo-tag"
+        url: "http://example.com/imagen.png"
     UserWithPosts:
       type: object
       properties:
@@ -678,7 +718,18 @@ components:
         Posts:
           type: array
           items:
-            $ref: '#/components/schemas/Post'
+            allOf:
+              - $ref: '#/components/schemas/Post'
+              - type: object
+                properties:
+                  Tags:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Tag'
+                  postImagenes:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PostImage'
     UserWithComments:
       type: object
       properties:
